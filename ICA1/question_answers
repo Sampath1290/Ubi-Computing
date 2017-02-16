@@ -1,0 +1,16 @@
+Travis Siems and Parker Holloway
+
+Lab 1
+
+PART THREE:
+
+Does it look different when different people touch the wire? What do you observe?
+Yes, different people can have different effects on the signal based on the conductivity of their hands.
+
+For Thought
+
+A 16-bit integer could be sent by using 2 bytes to represent each number. The first byte would represent the first 8 bits of the integer and the second byte would represent the next 8 bits. If the serial write is limited to one byte apart, a delimiter byte could be included between each number that would not be used in any number itself.
+
+This way of plotting is not very efficient because some data is displayed on the graph, unchanged, for a decent amount of time. Yet, the data is completely re-plotted every time. It is not incredibly necessary to see this many data points in the graph, so one way to make it more efficient would be to plot fewer points.
+
+Based on our delays and baudrate, we would have a “true sampling rate” of 10Hz.
