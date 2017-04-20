@@ -36,6 +36,11 @@
 
 }
 
+-(void) viewDidAppear:(BOOL)animated
+{
+    [self scanForDevices];
+}
+
 -(void)scanForDevices
 {
     // disconnect from any peripherals

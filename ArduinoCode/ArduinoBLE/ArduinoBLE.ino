@@ -49,6 +49,7 @@ void setup()
 
 
   myservo.attach(SERVO_PIN);
+  myservo.write(0);
   
   // Init. and start BLE library.
   ble_begin();
@@ -101,7 +102,7 @@ unsigned long TimerA;
 
 void loop()
 {
-  noInterrupts();
+//  noInterrupts();
 //  if(buttonState==1) {
 //    buttonHold += 1;
 //
@@ -127,6 +128,7 @@ void loop()
       command += c; //add each character to the command
     }
     Serial.println(command);
+    
 
 //    if( command.substring(0,9) == "Light ON;" ) {
 //      lightOn = HIGH;
@@ -136,9 +138,24 @@ void loop()
 //      lightOn = LOW;
 //      digitalWrite( LED_PIN, LOW );
 //    }
+    
     if ( command.substring(0,5) == "Servo" ) {
         String servoPos = command.substring(6,command.indexOf(';'));
         myservo.write(servoPos.toInt());
+    } else if ( command.substring(0,10) == "MultiServo" ) {
+        int spaceIndex = command.indexOf(' ',11);
+        int spaceIndex2 = command.indexOf(' ',spaceIndex+1);
+        String servoPos1 = command.substring(11,spaceIndex);
+        String servoPos2 = command.substring(spaceIndex+1,spaceIndex2);
+        String servoPos3 = command.substring(spaceIndex2+1,command.indexOf(';'));
+        
+        Serial.println("Writing: ("+servoPos1+","+servoPos2+","+servoPos3+")");
+        
+        myservo.write(servoPos1.toInt());
+        delay(100);
+        myservo.write(servoPos2.toInt());
+        delay(200);
+        myservo.write(servoPos3.toInt());
     }
 
     
@@ -148,7 +165,7 @@ void loop()
 
 
 
-  interrupts();
+//  interrupts();
   //read from serial port
   if ( Serial.available() )
   {

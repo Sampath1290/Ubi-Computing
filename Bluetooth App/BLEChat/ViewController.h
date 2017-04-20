@@ -15,6 +15,7 @@
 //CHANGE 2a: No longer need to be a delegate
 @interface ViewController : UIViewController <BLEDelegate> {
     
+    
 //    AVAudioPlayer* audioPlayer;
 }
 
@@ -24,6 +25,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *label;
 @property (weak, nonatomic) IBOutlet UILabel *labelRSSI;
 @property (strong, nonatomic) BLE* bleShield;
+
+@property (weak, nonatomic) IBOutlet UITextField *servoStartField;
+@property (weak, nonatomic) IBOutlet UITextField *servoEndField;
+
+
 //@property (weak, nonatomic) IBOutlet UIProgressView *volumeView;
 
 @end

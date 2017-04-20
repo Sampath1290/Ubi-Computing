@@ -17,6 +17,9 @@
 
 @implementation ViewController
 
+NSString* servoStartValue = @"0";
+NSString* servoEndValue = @"20";
+
 // CHANGE 3: Add support for lazy instantiation (like we did in the table view controller)
 -(BLE*)bleShield
 {
@@ -56,6 +59,15 @@
     
     // this example function "onBLEDidReceiveData:" is done for you, see below
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector (onBLEDidReceiveData:) name:kBleReceivedDataNotification object:nil];
+    
+    //Looks for single or multiple taps.
+//    UITapGestureRecognizer *tap  = [UITabGestureRecognizer init:target:]
+    UITapGestureRecognizer *tap  = [[UITapGestureRecognizer alloc] initWithTarget: self action: @selector(dismissKeyboard:)];
+    
+    //Uncomment the line below if you want the tap not not interfere and cancel other interactions.
+    //tap.cancelsTouchesInView = false
+    
+    [self.view addGestureRecognizer:tap];
 
 }
 
@@ -64,6 +76,27 @@
     
 //    [audioPlayer pause];
 //    audioPlayer = nil;
+}
+
+-(void) dismissKeyboard:(UITapGestureRecognizer *)recognizer
+{
+    [self.view endEditing:true];
+    
+    NSString *startVal = [self.servoStartField text];
+    NSString *endVal = [self.servoEndField text];
+    
+    if (startVal.intValue < 0 || startVal.intValue > 180) {
+        [self.servoStartField setText:servoStartValue];
+    } else {
+        servoStartValue = [self.servoStartField text];
+    }
+    if (endVal.intValue < 0 || endVal.intValue > 180) {
+        [self.servoEndField setText:servoEndValue];
+    } else {
+        servoEndValue = [self.servoEndField text];
+    }
+//    NSNumber *rssi =[notification.userInfo objectForKey:@"RSSI"];
+//    self.labelRSSI.text = rssi.stringValue; // when RSSI read is complete, display it
 }
 
 //-(void) playMP3 {
@@ -97,12 +130,12 @@ NSTimer *rssiTimer;
 }
 
 // OLD FUNCTION: parse the received data using BLEDelegate protocol
--(void) bleDidReceiveData:(unsigned char *)data length:(int)length
-{
-    NSData *d = [NSData dataWithBytes:data length:length];
-    NSString *s = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
-//    self.label.text = s;
-}
+//-(void) bleDidReceiveData:(unsigned char *)data length:(int)length
+//{
+////    NSData *d = [NSData dataWithBytes:data length:length];
+////    NSString *s = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
+////    self.label.text = s;
+//}
 
 // NEW FUNCTION EXAMPLE: parse the received data from NSNotification
 -(void) onBLEDidReceiveData:(NSNotification *)notification
@@ -260,12 +293,26 @@ NSTimer *rssiTimer;
     
     s = [NSString stringWithFormat:@"%@\r\n", s];
     d = [s dataUsingEncoding:NSUTF8StringEncoding];
-    
+    NSLog(@"Sending SErvo: %@", s);
     [self.bleShield write:d];
 
     
 }
 
+- (IBAction)activateButtonPressed:(id)sender {
+    NSString *s;
+    NSData *d;
+    
+    
+    s = [NSString stringWithFormat: @"MultiServo %d %d %d;", servoStartValue.intValue,servoEndValue.intValue,servoStartValue.intValue];
+    
+    
+    s = [NSString stringWithFormat:@"%@\r\n", s];
+    d = [s dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"Sending: %@", s);
+    [self.bleShield write:d];
+}
 
 
 @end

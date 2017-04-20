@@ -4,6 +4,8 @@
 //
 //  Created by Cheong on 15/8/12.
 //  Copyright (c) 2012 RedBear Lab., All rights reserved.
+
+// Icon made by Freepik from www.flaticon.com 
 //
 
 #import <UIKit/UIKit.h>
