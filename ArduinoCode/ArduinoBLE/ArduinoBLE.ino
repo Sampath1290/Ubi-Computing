@@ -58,66 +58,28 @@ void setup()
   Serial.begin(57600);
 }
 
+void writeMulti(int servoPos1, int servoPos2, int servoPos3) {
+  myservo.write(servoPos1);
+  delay(100);
+  myservo.write(servoPos2);
+  delay(200);
+  myservo.write(servoPos3);
+}
+
 unsigned char buf[16] = {0};
 unsigned char len = 0;
 String command;
-//volatile int buttonState = 0;
-//int potVal = 0;
-//bool lightOn = LOW;
-//volatile int strobeMode = 0;
-//int buttonHold = 0;
-
-//int delayVals[4] = {0,300,200,100};
-
-
-
-
-//void strobeTheLight() {
-//
-//  //send button state along BLE
-//  buttonState = digitalRead(BTN_PIN);
-//  String sendCommand = "BTN " + String(buttonState);
-//  for( int i = 0; i < sendCommand.length(); i++ ) {
-//    ble_write( sendCommand[i] );
-//  }
-//
-//  // update button state when button is pressed
-//  if(buttonState==1) {
-//    strobeMode += 1;
-//
-//    //reset strobeMode if it's greater than 3
-//    if(strobeMode > 3) {
-//      strobeMode = 0;
-//    }
-//  }
-//  else {
-//    // buttonState = 0
-//  }
-// 
-//}
 
 
 bool waiting = false;
 unsigned long TimerA;
+unsigned long scheduledMillis = 0;
+int scheduledVal1 = 0;
+int scheduledVal2 = 0;
+int scheduledVal3 = 0;
 
 void loop()
 {
-//  noInterrupts();
-//  if(buttonState==1) {
-//    buttonHold += 1;
-//
-//    if(buttonHold > 60) {
-//      String songCommand = "BTN HOLD ";
-//      for( int i = 0; i < songCommand.length(); i++ ) {
-//        ble_write( songCommand[i] );
-//      }
-//
-//      buttonHold = 0;
-//    }
-//  }
-//  else {
-//    buttonHold = 0;
-//  }
 
   //read from bluetooth low energy
   if ( ble_available() )
@@ -151,19 +113,59 @@ void loop()
         
         Serial.println("Writing: ("+servoPos1+","+servoPos2+","+servoPos3+")");
         
-        myservo.write(servoPos1.toInt());
-        delay(100);
-        myservo.write(servoPos2.toInt());
-        delay(200);
-        myservo.write(servoPos3.toInt());
-    }
+        writeMulti(servoPos1.toInt(),servoPos2.toInt(),servoPos3.toInt());
+    } else if ( command.substring(0,8) == "Schedule" ) {
+       String seconds = command.substring(9,command.indexOf(';'));
+       
+       Serial.println("Waiting seconds: "+seconds);
+       scheduledMillis = millis();
+       Serial.println("Millis now: "+String(scheduledMillis));
+       Serial.println("Add: "+String(1000*seconds.toInt()));
+       scheduledMillis += 1000*seconds.toInt();
+       Serial.println("Scheduled millis: "+String(scheduledMillis));
+       Serial.println("millis now: "+String(millis()));
+       
+       scheduledVal1 = 20;
+       scheduledVal2 = 50;
+       scheduledVal3 = 20;
+    } else if ( command.substring(0,13) == "MultiSchedule" ) {
 
+       int spaceIndex = command.indexOf(' ',14);
+       int spaceIndex2 = command.indexOf(' ',spaceIndex+1);
+       int spaceIndex3 = command.indexOf(' ',spaceIndex2+1);
+       String seconds = command.substring(14,spaceIndex);
+       String servoPos1 = command.substring(spaceIndex+1,spaceIndex2);
+       String servoPos2 = command.substring(spaceIndex2+1,spaceIndex3);
+       String servoPos3 = command.substring(spaceIndex3+1,command.indexOf(';'));
+        
+       Serial.println("Writing: ("+servoPos1+","+servoPos2+","+servoPos3+")");
+        
+       Serial.println("Waiting seconds: "+seconds);
+       scheduledMillis = millis() + 1000*seconds.toInt();
+       
+       scheduledVal1 = servoPos1.toInt();
+       scheduledVal2 = servoPos2.toInt();
+       scheduledVal3 = servoPos3.toInt();
+    }
+    Serial.println("Command: "+ command);
     
     Serial.println();
+  } 
+  
+  
+
+
+  //check if there's something scheduled
+  if( scheduledMillis > 0 ) {
+    unsigned long millisNow = millis();
+    Serial.println(millisNow);
+    if( millisNow > scheduledMillis) {
+      //activate servo
+      Serial.println("ACTIVATE SCHEDULED ACTIVITY");
+      writeMulti(scheduledVal1,scheduledVal2,scheduledVal3);
+      scheduledMillis = 0;
+    }
   }
-
-
-
 
 //  interrupts();
   //read from serial port

@@ -10,7 +10,8 @@
 #import <AVFoundation/AVFoundation.h>
 
 @interface TableViewController : UITableViewController {
-     AVAudioPlayer* audioPlayer;   
+     AVAudioPlayer* audioPlayer;
+    NSTimer *scanTimer;
 }
 
 

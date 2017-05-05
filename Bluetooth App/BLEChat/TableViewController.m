@@ -34,6 +34,11 @@
     
     [self scanForDevices];
 
+    self->scanTimer = [NSTimer scheduledTimerWithTimeInterval:(float)3.5
+                                     target:self
+                                   selector:@selector(scanForDevices)
+                                   userInfo:nil
+                                    repeats:YES];
 }
 
 -(void) viewDidAppear:(BOOL)animated
@@ -70,6 +75,16 @@
 -(void) didFinishScanning:(NSTimer*) timer{
     [self.tableView reloadData];
     [self.refreshControl endRefreshing];
+    
+    for( int i = 0; i < [self.bleShield.peripherals count]; i++) {
+        CBPeripheral* aPeripheral = [self.bleShield.peripherals objectAtIndex:i];
+        if( [aPeripheral.name isEqualToString:@"Gizmo v1.0"] ) {
+//            NSLog(@"FOUND GIZMO!");
+//            [scanTimer invalidate];
+//            [self.bleShield connectPeripheral:aPeripheral];
+//            [self performSegueWithIdentifier:@"cellPush" sender:self];
+        }
+    }
 }
 
 
@@ -107,6 +122,7 @@
     CBPeripheral *aPeripheral = [self.bleShield.peripherals objectAtIndex:indexPath.row];
     
     //CHANGE 6: add code her to connect to the selected peripheral (aPeripheral)
+    [scanTimer invalidate];
     [self.bleShield connectPeripheral:aPeripheral];
     
     

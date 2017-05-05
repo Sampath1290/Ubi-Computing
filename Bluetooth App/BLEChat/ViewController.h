@@ -14,7 +14,7 @@
 
 //CHANGE 2a: No longer need to be a delegate
 @interface ViewController : UIViewController <BLEDelegate> {
-    
+//    - (void) sendMultiServo;
     
 //    AVAudioPlayer* audioPlayer;
 }

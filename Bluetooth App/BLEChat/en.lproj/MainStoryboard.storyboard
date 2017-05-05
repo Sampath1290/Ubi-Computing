@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="DOC-ad-SEQ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="DOC-ad-SEQ">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -168,6 +168,30 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                             </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Proximity Awareness" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="44i-Yu-XNj">
+                                <rect key="frame" x="16" y="514" width="158" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Schedule Button" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SLv-1r-fG3">
+                                <rect key="frame" x="16" y="417" width="158" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lHL-k5-UNz">
+                                <rect key="frame" x="21" y="451" width="170" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="170" id="Zzh-p8-DWS"/>
+                                </constraints>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="11n-De-2Of">
+                                <rect key="frame" x="21" y="543" width="51" height="31"/>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -182,22 +206,31 @@
                             <constraint firstItem="Yei-61-eeZ" firstAttribute="top" secondItem="TOC-23-fgT" secondAttribute="bottom" constant="56" id="CXz-Sr-Yhs"/>
                             <constraint firstItem="YKC-0Q-PO2" firstAttribute="top" secondItem="9xq-kn-Wvv" secondAttribute="bottom" constant="9" id="E87-2i-Cd1"/>
                             <constraint firstItem="WoT-GH-Rbp" firstAttribute="trailing" secondItem="hW9-Kf-X5z" secondAttribute="trailing" id="IVQ-HT-PvP"/>
+                            <constraint firstItem="lHL-k5-UNz" firstAttribute="top" secondItem="SLv-1r-fG3" secondAttribute="bottom" constant="13" id="LOj-zF-Wra"/>
+                            <constraint firstItem="SLv-1r-fG3" firstAttribute="trailing" secondItem="44i-Yu-XNj" secondAttribute="trailing" id="OJ0-Sn-hVi"/>
                             <constraint firstItem="9xq-kn-Wvv" firstAttribute="top" secondItem="oPb-Om-fte" secondAttribute="bottom" constant="7" id="RMO-5v-Qkg"/>
                             <constraint firstItem="Yei-61-eeZ" firstAttribute="leading" secondItem="oPb-Om-fte" secondAttribute="leading" id="SiV-5d-lhO"/>
                             <constraint firstAttribute="trailingMargin" secondItem="b5V-AP-WeN" secondAttribute="trailing" constant="5" id="Tya-PA-cNu"/>
                             <constraint firstItem="TOC-23-fgT" firstAttribute="baseline" secondItem="b5V-AP-WeN" secondAttribute="baseline" id="U62-4B-poe"/>
                             <constraint firstItem="Rfh-MU-4ew" firstAttribute="leading" secondItem="oPb-Om-fte" secondAttribute="leading" id="WVr-4g-s3e"/>
+                            <constraint firstItem="lHL-k5-UNz" firstAttribute="leading" secondItem="Yei-61-eeZ" secondAttribute="leading" id="Zjd-aG-3hq"/>
                             <constraint firstItem="oPb-Om-fte" firstAttribute="trailing" secondItem="Ar9-D5-Od9" secondAttribute="trailing" id="aGo-84-iQW"/>
                             <constraint firstAttribute="trailingMargin" secondItem="oPb-Om-fte" secondAttribute="trailing" constant="15" id="bJ4-kp-XfE"/>
+                            <constraint firstItem="11n-De-2Of" firstAttribute="top" secondItem="44i-Yu-XNj" secondAttribute="bottom" constant="8" symbolic="YES" id="cNV-UI-8T9"/>
                             <constraint firstItem="Yei-61-eeZ" firstAttribute="baseline" secondItem="WoT-GH-Rbp" secondAttribute="baseline" id="cpY-pn-yGJ"/>
+                            <constraint firstItem="44i-Yu-XNj" firstAttribute="top" secondItem="lHL-k5-UNz" secondAttribute="bottom" constant="33" id="hbW-jk-5XA"/>
                             <constraint firstItem="oPb-Om-fte" firstAttribute="top" secondItem="Rfh-MU-4ew" secondAttribute="bottom" constant="7" id="hoa-s6-YPe"/>
                             <constraint firstItem="hW9-Kf-X5z" firstAttribute="trailing" secondItem="3" secondAttribute="trailingMargin" id="lL2-uH-zQK"/>
+                            <constraint firstItem="11n-De-2Of" firstAttribute="leading" secondItem="Yei-61-eeZ" secondAttribute="leading" id="mTo-8H-qfK"/>
+                            <constraint firstItem="SLv-1r-fG3" firstAttribute="leading" secondItem="44i-Yu-XNj" secondAttribute="leading" id="n4Y-qq-BrD"/>
                             <constraint firstItem="9xq-kn-Wvv" firstAttribute="leading" secondItem="690-KT-Rjs" secondAttribute="trailing" constant="9" id="nP2-Mg-T7d"/>
                             <constraint firstItem="08F-fj-0Su" firstAttribute="leading" secondItem="690-KT-Rjs" secondAttribute="leading" id="qql-Wk-hnF"/>
+                            <constraint firstItem="rAX-QX-LvN" firstAttribute="top" secondItem="11n-De-2Of" secondAttribute="bottom" constant="93" id="qte-JS-vv2"/>
                             <constraint firstItem="Rfh-MU-4ew" firstAttribute="leading" secondItem="3" secondAttribute="leadingMargin" constant="5" id="rux-gj-hlc"/>
                             <constraint firstItem="08F-fj-0Su" firstAttribute="centerX" secondItem="oPb-Om-fte" secondAttribute="centerX" id="sNe-cy-DKD"/>
                             <constraint firstItem="08F-fj-0Su" firstAttribute="leading" secondItem="3" secondAttribute="leadingMargin" constant="13" id="sca-2e-c50"/>
                             <constraint firstItem="Ar9-D5-Od9" firstAttribute="top" secondItem="08F-fj-0Su" secondAttribute="bottom" constant="5" id="sh0-kA-oj0"/>
+                            <constraint firstItem="44i-Yu-XNj" firstAttribute="leading" secondItem="hW9-Kf-X5z" secondAttribute="leading" id="v5q-bf-8aQ"/>
                             <constraint firstItem="TOC-23-fgT" firstAttribute="top" secondItem="YKC-0Q-PO2" secondAttribute="bottom" constant="20" id="wKW-rI-xsf"/>
                             <constraint firstItem="Rfh-MU-4ew" firstAttribute="top" secondItem="hW9-Kf-X5z" secondAttribute="bottom" constant="7" id="wZw-yl-6hr"/>
                             <constraint firstItem="690-KT-Rjs" firstAttribute="leading" secondItem="YKC-0Q-PO2" secondAttribute="leading" id="yWm-R1-6kq"/>
@@ -208,11 +241,13 @@
                         <outlet property="label" destination="08F-fj-0Su" id="Zb8-iq-L3N"/>
                         <outlet property="labelRSSI" destination="b5V-AP-WeN" id="cCH-Bl-gHH"/>
                         <outlet property="peripheralLabel" destination="hW9-Kf-X5z" id="rug-jO-qh7"/>
+                        <outlet property="proximityAwarenessSwitch" destination="11n-De-2Of" id="x7d-KZ-R2x"/>
                         <outlet property="servoEndField" destination="WoT-GH-Rbp" id="O3e-tB-pqm"/>
                         <outlet property="servoSlider" destination="oPb-Om-fte" id="qzr-dk-eNB"/>
                         <outlet property="servoStartField" destination="Yei-61-eeZ" id="ua9-re-wUZ"/>
                         <outlet property="spinner" destination="9xq-kn-Wvv" id="9JQ-2a-gv4"/>
                         <outlet property="textField" destination="YKC-0Q-PO2" id="gEb-bQ-ezl"/>
+                        <outlet property="timeTextField" destination="lHL-k5-UNz" id="bOl-z6-EEa"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>

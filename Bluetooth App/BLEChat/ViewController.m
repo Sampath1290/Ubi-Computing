@@ -12,13 +12,42 @@
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *peripheralLabel;
 @property (weak, nonatomic) IBOutlet UISlider *servoSlider;
-
+@property (weak, nonatomic) IBOutlet UISwitch *proximityAwarenessSwitch;
+@property (weak, nonatomic) IBOutlet UITextField *timeTextField;
+@property (strong, nonatomic) IBOutlet UIDatePicker *datePicker;
 @end
 
 @implementation ViewController
 
 NSString* servoStartValue = @"0";
 NSString* servoEndValue = @"20";
+NSTimer* timer;
+NSDate* dateTillTimer;
+
+//void) sendMultiServo();
+
+int BUFFER_SIZE = 20;
+
+NSInteger proximityBuffer[20];
+int proximityIndex = 0;
+
+//UIDatePicker* datePicker = [[UIDatePicker alloc]init];
+
+- (void)sendMultiServo
+{
+    NSString *s;
+    NSData *d;
+    
+    
+    s = [NSString stringWithFormat: @"MultiServo %d %d %d;", servoStartValue.intValue,servoEndValue.intValue,servoStartValue.intValue];
+    
+    
+    s = [NSString stringWithFormat:@"%@\r\n", s];
+    d = [s dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSLog(@"Sending: %@", s);
+    [self.bleShield write:d];
+}
 
 // CHANGE 3: Add support for lazy instantiation (like we did in the table view controller)
 -(BLE*)bleShield
@@ -34,23 +63,28 @@ NSString* servoEndValue = @"20";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
     
-    // CHANGE 1.a: change this as you no longer need to instantiate the BLE Object like this
-    // nor should this ViewController be the delegate
-//    bleShield = [[BLE alloc] init];
-//    [bleShield controlSetup];
-//    bleShield.delegate = self;
+    for(int i = 0; i<BUFFER_SIZE; i += 1) {
+        proximityBuffer[i] = -200;
+    }
     
-//    NSString* path = [[NSBundle mainBundle] pathForResource:@"startmeup" ofType:@"mp3"];
-//    NSURL* file = [NSURL fileURLWithPath:path];
-    // thanks @gebirgsbaerbel
     
-//    audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:file error:nil];
-//    [audioPlayer setVolume:0.5];
-//    [audioPlayer prepareToPlay];
+    _datePicker = [[UIDatePicker alloc]init];
+    _datePicker.datePickerMode = UIDatePickerModeCountDownTimer;
+    [self.timeTextField setInputView:_datePicker];
     
-    //CHANGE 4: add subscription to notifications from the app delegate
+    UIToolbar *toolBar=[[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+    [toolBar setTintColor:[UIColor grayColor]];
+    UIBarButtonItem *doneBtn=[[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleBordered target:self action:@selector(showSelectedDate)];
+    UIBarButtonItem *space=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    [toolBar setItems:[NSArray arrayWithObjects:space,doneBtn, nil]];
+    
+    
+    [self.timeTextField setInputAccessoryView:toolBar];
+    
+
+    
+    //add subscription to notifications from the app delegate
     //These selector functions should be created from the old BLEDelegate functions
     // One example has already been completed for you on the receiving of data function
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onBLEDidConnect:) name:kBleConnectNotification object:nil];
@@ -68,15 +102,74 @@ NSString* servoEndValue = @"20";
     //tap.cancelsTouchesInView = false
     
     [self.view addGestureRecognizer:tap];
+    
+//    _bleShield
+
 
 }
+
+- (void) showSelectedDate
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//    self.timeTextField.inputView value
+    [dateFormatter setDateFormat: @"HH:mm:ss"];
+    dateTillTimer = [_datePicker date];
+    
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:(NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond) fromDate:dateTillTimer];
+    NSInteger hour = [components hour];
+    NSInteger minute = [components minute];
+    NSInteger second = [components second];
+    
+    
+    NSString *s;
+    NSData *d;
+    
+//    s = [NSString stringWithFormat: @"MultiSchedule %ld %d %d %d;", hour*60*60+minute*60+second, servoStartValue.intValue,servoEndValue.intValue,servoStartValue.intValue];
+    
+    s = [NSString stringWithFormat: @"Schedule %ld;", hour*60*60+minute*60+second];
+    
+    s = [NSString stringWithFormat:@"%@\r\n", s];
+    d = [s dataUsingEncoding:NSUTF8StringEncoding];
+    NSLog(@"Sending Schedule: %@", s);
+    [self.bleShield write:d];
+    
+//    [self.timeTextField setText: [dateFormatter stringFromDate: [_datePicker date]] ];
+    [self.view endEditing:true];
+    
+    if( timer ) {
+        [timer invalidate];
+    }
+    timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateLabel) userInfo:nil repeats:YES];
+    
+    NSLog(@"SHOW SELECTED DATE");
+}
+
+- (void) updateLabel
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    //    self.timeTextField.inputView value
+    [dateFormatter setDateFormat: @"HH:mm:ss"];
+    NSString *text = [dateFormatter stringFromDate: dateTillTimer];
+    [self.timeTextField setText: text ];
+    
+    if( [text isEqual:@"00:00:00"] ) {
+        NSLog(@"Done!");
+        [timer invalidate];
+    }
+//    NSLog(text);
+    dateTillTimer = [dateTillTimer dateByAddingTimeInterval:-1];
+    
+//    if( dateTillTimer )
+}
+
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
-//    [audioPlayer pause];
-//    audioPlayer = nil;
 }
+
+
 
 -(void) dismissKeyboard:(UITapGestureRecognizer *)recognizer
 {
@@ -99,15 +192,6 @@ NSString* servoEndValue = @"20";
 //    self.labelRSSI.text = rssi.stringValue; // when RSSI read is complete, display it
 }
 
-//-(void) playMP3 {
-//    if ([audioPlayer isPlaying]) {
-//        [audioPlayer pause];
-//        self.label.text = @"PAUSE";
-//    } else {
-//        [audioPlayer play];
-//        self.label.text = @"PLAY";
-//    }
-//}
 
 //setup auto rotation in code
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -127,15 +211,27 @@ NSTimer *rssiTimer;
 {
     NSNumber *rssi =[notification.userInfo objectForKey:@"RSSI"];
     self.labelRSSI.text = rssi.stringValue; // when RSSI read is complete, display it
+    NSLog(@"RSSI: %@",rssi.stringValue);
+    self.label.text = [@"RSSI: " stringByAppendingString: rssi.stringValue];
+    proximityBuffer[proximityIndex%BUFFER_SIZE] = rssi.integerValue;
+    if( _proximityAwarenessSwitch.isOn ) {
+        if( rssi.intValue > -59 ) {
+            NSLog(@"NEAR!!");
+            int count = 0;
+            for(int i = 0; i<BUFFER_SIZE; i += 1) {
+                if( proximityBuffer[i] > -59 ) {
+                    count += 1;
+                }
+            }
+            if( count <= 1 ) {
+                [self sendMultiServo];
+            }
+            NSLog(@"count: %d",count);
+        }
+    }
+    proximityIndex += 1;
 }
 
-// OLD FUNCTION: parse the received data using BLEDelegate protocol
-//-(void) bleDidReceiveData:(unsigned char *)data length:(int)length
-//{
-////    NSData *d = [NSData dataWithBytes:data length:length];
-////    NSString *s = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
-////    self.label.text = s;
-//}
 
 // NEW FUNCTION EXAMPLE: parse the received data from NSNotification
 -(void) onBLEDidReceiveData:(NSNotification *)notification
@@ -144,19 +240,12 @@ NSTimer *rssiTimer;
     NSString *s = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
     NSArray *array = [s componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     if ([array[0]  isEqual: @"BTN"]) {
-//        self.label.text = s;
+        
         if ([array[1] isEqual:@"HOLD"]) {
-//            NSLog(@"play!");
-//            [self playMP3];
+
         }
     } else if ([array[0]  isEqual: @"POT"]) {
-//        NSLog(@"%@", array[1]);
-//        float volume = (float)([array[1] integerValue]/4) / 255.0;
-//        NSLog(@"VOLUME: %.f", volume);
-//        [audioPlayer setVolume:volume];
-//        [self.volumeView setProgress:volume];
-//        NSString *ds = [NSString stringWithFormat: @"%.f", (float)([array[1] integerValue]/4)];
-//        self.label2.text = ds;
+
     }
     
 }
@@ -167,6 +256,7 @@ NSTimer *rssiTimer;
     //CHANGE 5.b: remove all instances of the button at top
 //    [self.buttonConnect setTitle:@"Connect" forState:UIControlStateNormal];
     
+    NSLog(@"DISCONNECTED!!!"); // should now go back to tableviewcontroller
     [rssiTimer invalidate];
 }
 
@@ -209,77 +299,6 @@ NSTimer *rssiTimer;
 }
 
 
-// CHANGE 1.b: change this as you no longer need to search for perpipherals in this view controller
-//- (IBAction)BLEShieldScan:(id)sender
-//{
-//    // disconnect from any peripherals
-//    if (bleShield.activePeripheral)
-//        if(bleShield.activePeripheral.state == CBPeripheralStateConnected)
-//        {
-//            [[bleShield CM] cancelPeripheralConnection:[bleShield activePeripheral]];
-//            return;
-//        }
-//    
-//    // set peripheral to nil
-//    if (bleShield.peripherals)
-//        bleShield.peripherals = nil;
-//    
-//    //start search for peripherals with a timeout of 3 seconds
-//    // this is an asynchronous call and will return before search is complete
-//    [bleShield findBLEPeripherals:3];
-//    
-//    // after three seconds, try to connect to first peripheral
-//    [NSTimer scheduledTimerWithTimeInterval:(float)3.0
-//                                     target:self
-//                                   selector:@selector(connectionTimer:)
-//                                   userInfo:nil
-//                                    repeats:NO];
-//    
-//    // give connection feedback to the user
-//    [self.spinner startAnimating];
-//}
-
-// CHANGE 1.c: change this as you no longer need to create the connection in this view controller
-// Called when scan period is over to connect to the first found peripheral
-//-(void) connectionTimer:(NSTimer *)timer
-//{
-//    if(bleShield.peripherals.count > 0)
-//    {
-//        // connect to the first found peripheral
-//        [bleShield connectPeripheral:[bleShield.peripherals objectAtIndex:0]];
-//    }
-//    else
-//    {
-//        [self.spinner stopAnimating];
-//    }
-//}
-//- (IBAction)switched:(id)sender {
-//    UISwitch *mySwitch = (UISwitch *)sender;
-//    if ([mySwitch isOn]) {
-//        NSLog(@"its on!");
-//        NSString *s;
-//        NSData *d;
-//        
-//        s = @"Light ON;";
-//        
-//        s = [NSString stringWithFormat:@"%@\r\n", s];
-//        d = [s dataUsingEncoding:NSUTF8StringEncoding];
-//        
-//        [self.bleShield write:d];
-//    } else {
-//        NSLog(@"its off!");
-//        NSString *s;
-//        NSData *d;
-//        
-//        s = @"Light OFF;";
-//        
-//        s = [NSString stringWithFormat:@"%@\r\n", s];
-//        d = [s dataUsingEncoding:NSUTF8StringEncoding];
-//        
-//        [self.bleShield write:d];
-//    }
-//}
-
 - (IBAction)servoChange:(id)sender {
     UISlider *slider = (UISlider *)sender;
     NSInteger sliderValue;
@@ -299,20 +318,10 @@ NSTimer *rssiTimer;
     
 }
 
-- (IBAction)activateButtonPressed:(id)sender {
-    NSString *s;
-    NSData *d;
-    
-    
-    s = [NSString stringWithFormat: @"MultiServo %d %d %d;", servoStartValue.intValue,servoEndValue.intValue,servoStartValue.intValue];
-    
-    
-    s = [NSString stringWithFormat:@"%@\r\n", s];
-    d = [s dataUsingEncoding:NSUTF8StringEncoding];
-    
-    NSLog(@"Sending: %@", s);
-    [self.bleShield write:d];
-}
 
+
+- (IBAction)activateButtonPressed:(id)sender {
+    [self sendMultiServo];
+}
 
 @end
