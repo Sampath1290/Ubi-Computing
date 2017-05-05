@@ -210,26 +210,29 @@ NSTimer *rssiTimer;
 -(void) onBLEDidUpdateRSSI:(NSNotification *)notification
 {
     NSNumber *rssi =[notification.userInfo objectForKey:@"RSSI"];
-    self.labelRSSI.text = rssi.stringValue; // when RSSI read is complete, display it
-    NSLog(@"RSSI: %@",rssi.stringValue);
-    self.label.text = [@"RSSI: " stringByAppendingString: rssi.stringValue];
-    proximityBuffer[proximityIndex%BUFFER_SIZE] = rssi.integerValue;
-    if( _proximityAwarenessSwitch.isOn ) {
-        if( rssi.intValue > -59 ) {
-            NSLog(@"NEAR!!");
-            int count = 0;
-            for(int i = 0; i<BUFFER_SIZE; i += 1) {
-                if( proximityBuffer[i] > -59 ) {
-                    count += 1;
+    
+    if( rssi.stringValue ) {
+        self.labelRSSI.text = rssi.stringValue; // when RSSI read is complete, display it
+        NSLog(@"RSSI: %@",rssi.stringValue);
+        self.label.text = [@"RSSI: " stringByAppendingString: rssi.stringValue];
+        proximityBuffer[proximityIndex%BUFFER_SIZE] = rssi.integerValue;
+        if( _proximityAwarenessSwitch.isOn ) {
+            if( rssi.intValue > -59 ) {
+                NSLog(@"NEAR!!");
+                int count = 0;
+                for(int i = 0; i<BUFFER_SIZE; i += 1) {
+                    if( proximityBuffer[i] > -59 ) {
+                        count += 1;
+                    }
                 }
+                if( count <= 1 ) {
+                    [self sendMultiServo];
+                }
+                NSLog(@"count: %d",count);
             }
-            if( count <= 1 ) {
-                [self sendMultiServo];
-            }
-            NSLog(@"count: %d",count);
         }
+        proximityIndex += 1;
     }
-    proximityIndex += 1;
 }
 
 
@@ -255,9 +258,46 @@ NSTimer *rssiTimer;
 {
     //CHANGE 5.b: remove all instances of the button at top
 //    [self.buttonConnect setTitle:@"Connect" forState:UIControlStateNormal];
-    
-    NSLog(@"DISCONNECTED!!!"); // should now go back to tableviewcontroller
     [rssiTimer invalidate];
+    NSLog(@"DISCONNECTED!!!"); // should now go back to tableviewcontroller
+    UIAlertController * alert = [UIAlertController
+                                 alertControllerWithTitle:@"Gizmo Disconnected"
+                                 message:@"Lost connection to the Gizmo. Returning to menu."
+                                 preferredStyle:UIAlertControllerStyleAlert];
+    
+    
+    
+    UIAlertAction* yesButton = [UIAlertAction
+                                actionWithTitle:@"Okay"
+                                style:UIAlertActionStyleDefault
+                                handler:^(UIAlertAction * action) {
+                                    //Handle your yes please button action here
+                                    NSLog(@"OKAY!");
+                                    
+                                    [self performSegueWithIdentifier:@"unwindToMenuSegue" sender:self];
+                                }];
+    
+//    UIAlertAction* noButton = [UIAlertAction
+//                               actionWithTitle:@"No, thanks"
+//                               style:UIAlertActionStyleDefault
+//                               handler:^(UIAlertAction * action) {
+//                                   //Handle no, thanks button
+//                               }];
+    
+    [alert addAction:yesButton];
+//    [alert addAction:noButton];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+    
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {
+        NSLog(@"Cancel Tapped.");
+    }
+    else if (buttonIndex == 1) {
+        NSLog(@"OK Tapped. Hello World!");
+    }
 }
 
 //CHANGE 7: create function called from "BLEDidConnect" notification (you can change the function below)

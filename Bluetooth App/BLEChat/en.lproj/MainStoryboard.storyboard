@@ -248,9 +248,11 @@
                         <outlet property="spinner" destination="9xq-kn-Wvv" id="9JQ-2a-gv4"/>
                         <outlet property="textField" destination="YKC-0Q-PO2" id="gEb-bQ-ezl"/>
                         <outlet property="timeTextField" destination="lHL-k5-UNz" id="bOl-z6-EEa"/>
+                        <segue destination="9P9-in-PSC" kind="unwind" identifier="unwindToMenuSegue" unwindAction="unwindToTableViewController:" id="ghE-Rc-gE7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
+                <exit id="9P9-in-PSC" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1841.5" y="13.5"/>
         </scene>
