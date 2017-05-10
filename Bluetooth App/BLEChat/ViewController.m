@@ -49,7 +49,7 @@ int proximityIndex = 0;
     [self.bleShield write:d];
 }
 
-// CHANGE 3: Add support for lazy instantiation (like we did in the table view controller)
+// lazy instantiation
 -(BLE*)bleShield
 {
     if (!_bleShield) {
@@ -85,13 +85,11 @@ int proximityIndex = 0;
 
     
     //add subscription to notifications from the app delegate
-    //These selector functions should be created from the old BLEDelegate functions
-    // One example has already been completed for you on the receiving of data function
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onBLEDidConnect:) name:kBleConnectNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onBLEDidDisconnect:) name:kBleDisconnectNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onBLEDidUpdateRSSI:) name:kBleRSSINotification object:nil];
     
-    // this example function "onBLEDidReceiveData:" is done for you, see below
+    // this example function "onBLEDidReceiveData:" is done
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector (onBLEDidReceiveData:) name:kBleReceivedDataNotification object:nil];
     
     //Looks for single or multiple taps.
@@ -354,8 +352,6 @@ NSTimer *rssiTimer;
     d = [s dataUsingEncoding:NSUTF8StringEncoding];
     NSLog(@"Sending SErvo: %@", s);
     [self.bleShield write:d];
-
-    
 }
 
 
