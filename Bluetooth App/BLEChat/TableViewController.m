@@ -39,6 +39,7 @@
                                    selector:@selector(scanForDevices)
                                    userInfo:nil
                                     repeats:YES];
+    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 }
 
 -(void) viewDidAppear:(BOOL)animated

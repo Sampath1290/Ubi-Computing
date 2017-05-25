@@ -36,7 +36,7 @@ void setup()
   ble_set_name("Gizmo v1.0");
   
   myservo.attach(SERVO_PIN);
-  myservo.write(120);
+  myservo.write(70);
   
   // Init. and start BLE library.
   ble_begin();
@@ -68,9 +68,9 @@ int scheduledVal2 = 0;
 int scheduledVal3 = 0;
 
 bool isProximityAware = false;
-int servoVal1 = 120;
-int servoVal2 = 170;
-int servoVal3 = 120;
+int servoVal1 = 60;
+int servoVal2 = 120;
+int servoVal3 = 60;
 
 void loop()
 {
